@@ -1,6 +1,8 @@
 use core::ptr;
 use core::str::from_utf8;
 
+use crate::common::prop::PropReader;
+use super::DevTreeIndexProp;
 use super::iters::{DevTreeIndexIter, DevTreeIndexNodePropIter, DevTreeIndexNodeSiblingIter};
 use super::tree::{DTINode, DevTreeIndex};
 use crate::error::DevTreeError;
@@ -36,6 +38,10 @@ impl<'a, 'i: 'a, 'dt: 'i> DevTreeIndexNode<'a, 'i, 'dt> {
 
     pub fn props(&self) -> DevTreeIndexNodePropIter<'a, 'i, 'dt> {
         DevTreeIndexNodePropIter(DevTreeIndexIter::from_node(self.clone()))
+    }
+
+    pub fn prop(&self, name: &str) -> Option<DevTreeIndexProp> {
+        self.props().find(|prop| prop.name().is_ok_and(|n| n == name))
     }
 
     pub fn parent(&self) -> Option<Self> {
